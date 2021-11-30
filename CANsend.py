@@ -13,7 +13,7 @@
 #
 #
 
-
+import datetime
 import RPi.GPIO as GPIO
 import can
 import time
@@ -44,17 +44,20 @@ except OSError:
     exit()
 
 # Main loop
+
 try:
     while True:
         GPIO.output(led, True)
+        dt_now = datetime.datetime.now()
         msg = can.Message(arbitration_id=0x7de, data=[0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, count & 0xff],
                           extended_id=False)
-        bus.send(msg)
-        count += 1
-        time.sleep(0.1)
-        GPIO.output(led, False)
-        time.sleep(0.1)
-        print(msg)
+        while dt_now.second >= 0 and dt_now.second <= 10:
+            bus.send(msg)
+            count += 1
+            time.sleep(0.1)
+            GPIO.output(led, False)
+            time.sleep(0.1)
+            print(msg)
 
 
 
